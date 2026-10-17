@@ -14,18 +14,27 @@ const CHAT_MODEL_ITEMS = Object.fromEntries(
 ) as Record<ChatModelId, string>;
 
 export type ChatModelSelectProps = Readonly<{
+  /** Subset of CHAT_MODELS to offer, e.g. only those with an API key. */
+  models?: readonly ChatModelId[];
   value: ChatModelId;
   onChange: (value: ChatModelId) => void;
   disabled?: boolean;
   className?: string;
+  "aria-labelledby"?: string;
 }>;
 
 export function ChatModelSelect({
+  models,
   value,
   onChange,
   disabled = false,
   className,
+  "aria-labelledby": ariaLabelledBy,
 }: ChatModelSelectProps) {
+  const options = models
+    ? CHAT_MODELS.filter((m) => models.includes(m.id))
+    : CHAT_MODELS;
+
   return (
     <Select.Root
       value={value}
@@ -36,6 +45,7 @@ export function ChatModelSelect({
       disabled={disabled}
     >
       <Select.Trigger
+        aria-labelledby={ariaLabelledBy}
         className={cn(
           "inline-flex h-8 max-w-full min-w-40 items-center justify-between gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-left text-sm text-foreground shadow-sm outline-none transition-colors",
           "focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40",
@@ -68,7 +78,7 @@ export function ChatModelSelect({
             )}
           >
             <Select.List className="outline-none">
-              {CHAT_MODELS.map((m) => (
+              {options.map((m) => (
                 <Select.Item
                   key={m.id}
                   value={m.id}

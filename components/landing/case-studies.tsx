@@ -52,7 +52,7 @@ export async function CaseStudies() {
   return (
     <Section
       id="work"
-      index="04"
+      index="05"
       eyebrow="Selected work"
       title="Case Studies & Highlights"
       description="Representative builds—where architecture, models, and product UX had to ship as one coherent system."
@@ -78,7 +78,7 @@ export async function CaseStudies() {
             </div>
             <CardHeader>
               <CardTitle className="font-display text-xl tracking-wide md:text-2xl">
-                {c.title}
+                <h3>{c.title}</h3>
               </CardTitle>
               <CardDescription className="text-sm leading-relaxed text-muted-foreground">
                 {c.summary}

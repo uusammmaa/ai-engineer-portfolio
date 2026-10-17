@@ -85,6 +85,16 @@
   user-select: none;
 }
 
+/*
+ * Watermark numbers are pure decoration, so they render from a data attribute
+ * via ::before. That keeps them out of the accessibility tree and out of
+ * contrast checks, which only apply to real text content.
+ */
+.section-index::before,
+.decorative-index::before {
+  content: attr(data-index);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mesh-blobs::before,
   .mesh-blobs::after {

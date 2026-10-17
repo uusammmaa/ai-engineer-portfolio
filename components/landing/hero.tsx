@@ -71,7 +71,7 @@ export function Hero() {
           className="mt-10 flex flex-wrap gap-3"
         >
           <a
-            href="#work"
+            href="#projects"
             className={cn(
               buttonVariants({ size: "lg" }),
               "h-11 px-6 text-base shadow-lg shadow-primary/10"

@@ -31,7 +31,7 @@ export function TechnicalFlair() {
   return (
     <Section
       id="pipeline"
-      index="05"
+      index="06"
       eyebrow="Systems view"
       title="From Raw Data to Decisions"
       description="A stylised pipeline scorecard—how I think about quality across a typical RAG + agent deployment (not live metrics)."

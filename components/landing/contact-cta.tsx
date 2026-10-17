@@ -18,10 +18,9 @@ export function ContactCta() {
     >
       <span
         className="section-index pointer-events-none absolute left-2 top-8 select-none text-[clamp(3.5rem,12vw,10rem)] text-foreground/[0.06] md:left-6"
+        data-index="07"
         aria-hidden
-      >
-        06
-      </span>
+      />
       <div className="relative mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-[1.1fr_0.9fr] md:items-center md:px-8">
         <div>
           <p className="font-display text-xs uppercase tracking-[0.35em] text-primary">

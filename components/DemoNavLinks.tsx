@@ -17,7 +17,7 @@ export function DemoNavLinks({
   const pathname = usePathname();
 
   return (
-    <nav className={cn("flex flex-col gap-1.5", className)}>
+    <nav aria-label="Demos" className={cn("flex flex-col gap-1.5", className)}>
       {DEMO_NAV.map((item) => {
         const active =
           item.href === "/"
@@ -29,8 +29,10 @@ export function DemoNavLinks({
             key={item.href}
             href={item.href}
             onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
             className={cn(
               "relative rounded-lg border border-l-4 px-3 py-2.5 text-left transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               active
                 ? "border-border/50 border-l-primary bg-primary/10 text-foreground"
                 : "border-border/60 border-l-transparent bg-card/30 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground",

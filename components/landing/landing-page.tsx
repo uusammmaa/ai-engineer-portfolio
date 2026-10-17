@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { SiteHeader } from "@/components/landing/site-header";
 import { Hero } from "@/components/landing/hero";
+import { Projects } from "@/components/landing/projects";
 import { Services } from "@/components/landing/services";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { TechStack } from "@/components/landing/tech-stack";
@@ -22,8 +23,9 @@ export function LandingPage() {
   return (
     <>
       <SiteHeader />
-      <main className="font-body">
+      <main id="main" tabIndex={-1} className="font-body outline-none">
         <Hero />
+        <Projects />
         <Services />
         <HowItWorks />
         <TechStack />
@@ -38,7 +40,7 @@ export function LandingPage() {
           © {new Date().getFullYear()} Usama Akram · Lahore · Remote ·{" "}
           <a
             href="https://github.com/uusammmaa"
-            className="text-primary hover:underline"
+            className="rounded-sm text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             target="_blank"
             rel="noreferrer"
           >

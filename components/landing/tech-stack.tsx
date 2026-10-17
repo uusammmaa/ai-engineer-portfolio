@@ -33,7 +33,7 @@ export function TechStack() {
   return (
     <Section
       id="stack"
-      index="03"
+      index="04"
       eyebrow="Tooling"
       title="Tech Stack"
       description="The stack I reach for when reliability, velocity, and observability all have to land together."

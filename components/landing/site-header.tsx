@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV = [
+  { href: "#projects", label: "Projects" },
   { href: "#services", label: "Services" },
   { href: "#process", label: "Process" },
   { href: "#stack", label: "Stack" },
@@ -28,7 +29,10 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/75 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 md:h-[4.25rem] md:px-8">
-        <Link href="/" className="group flex flex-col leading-tight">
+        <Link
+          href="/"
+          className="group flex flex-col rounded-md leading-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <span className="font-display text-lg tracking-wide text-foreground md:text-xl">
             Usama Akram
           </span>
@@ -37,7 +41,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => (
             <a
               key={item.href}
@@ -75,12 +79,12 @@ export function SiteHeader() {
                   Navigate
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 p-4 pt-2">
+              <nav aria-label="Mobile" className="flex flex-col gap-1 p-4 pt-2">
                 {NAV.map((item) => (
                   <a
                     key={item.href}
                     href={item.href}
-                    className="rounded-lg px-3 py-3 text-lg text-foreground transition-colors hover:bg-muted"
+                    className="rounded-lg px-3 py-3 text-lg text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     onClick={() => setOpen(false)}
                   >
                     {item.label}

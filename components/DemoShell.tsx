@@ -18,7 +18,11 @@ import { cn } from "@/lib/utils";
 
 function DemoMain({ children }: { children: React.ReactNode }) {
   return (
-    <main className="font-body min-h-0 min-w-0 flex-1 overflow-y-auto">
+    <main
+      id="main"
+      tabIndex={-1}
+      className="font-body min-h-0 min-w-0 flex-1 overflow-y-auto outline-none"
+    >
       {children}
     </main>
   );
