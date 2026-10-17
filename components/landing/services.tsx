@@ -61,7 +61,7 @@ export function Services() {
   return (
     <Section
       id="services"
-      index="01"
+      index="02"
       eyebrow="Capabilities"
       title="What I Build For You"
       description="From first prototype to production traffic—systems designed around outcomes, latency, and maintainability."

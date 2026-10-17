@@ -70,7 +70,7 @@ export function HowItWorks() {
   return (
     <Section
       id="process"
-      index="02"
+      index="03"
       eyebrow="Engagement"
       title="How It Works"
       description="A clear arc from ambiguity to a system your team trusts in production."

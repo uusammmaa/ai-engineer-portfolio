@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { SiteHeader } from "@/components/landing/site-header";
 import { Hero } from "@/components/landing/hero";
+import { Projects } from "@/components/landing/projects";
 import { Services } from "@/components/landing/services";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { TechStack } from "@/components/landing/tech-stack";
@@ -24,6 +25,7 @@ export function LandingPage() {
       <SiteHeader />
       <main className="font-body">
         <Hero />
+        <Projects />
         <Services />
         <HowItWorks />
         <TechStack />

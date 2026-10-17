@@ -52,7 +52,7 @@ export async function CaseStudies() {
   return (
     <Section
       id="work"
-      index="04"
+      index="05"
       eyebrow="Selected work"
       title="Case Studies & Highlights"
       description="Representative builds—where architecture, models, and product UX had to ship as one coherent system."
