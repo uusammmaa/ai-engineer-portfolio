@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from "react";
 
-import { agentApiBase } from "@/lib/agent-api";
 import { parseBriefOutput } from "@/lib/agent-parse";
 import type { AgentStep, ResearchBrief } from "@/lib/agent-types";
 
@@ -43,7 +42,14 @@ function handleStep(
   setSteps((prev) => [...prev, step]);
 }
 
-export function useAgentStream() {
+export function useAgentStream({
+  apiBase,
+  onNetworkError,
+}: {
+  apiBase: string | null;
+  /** Called when the agent API cannot be reached at all. */
+  onNetworkError?: () => void;
+}) {
   const [steps, setSteps] = useState<AgentStep[]>([]);
   const [brief, setBrief] = useState<ResearchBrief | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +63,7 @@ export function useAgentStream() {
 
   const run = useCallback(async (jobUrl: string) => {
     const trimmed = jobUrl.trim();
-    if (!trimmed) return;
+    if (!trimmed || !apiBase) return;
 
     setRunning(true);
     setSteps([]);
@@ -65,7 +71,7 @@ export function useAgentStream() {
     setError(null);
 
     try {
-      const res = await fetch(`${agentApiBase}/agent/run`, {
+      const res = await fetch(`${apiBase}/agent/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_url: trimmed }),
@@ -106,10 +112,11 @@ export function useAgentStream() {
       }
     } catch {
       setError("Failed to connect to agent API");
+      onNetworkError?.();
     } finally {
       setRunning(false);
     }
-  }, []);
+  }, [apiBase, onNetworkError]);
 
   return { steps, brief, error, running, run, reset };
 }

@@ -6,13 +6,21 @@ import type { UIMessage } from "ai";
 import { useMemo, useState } from "react";
 
 import { ChatInput } from "@/components/ChatInput";
+import { ChatMessage } from "@/components/ChatMessage";
+import { DemoChecking, DemoOffline } from "@/components/DemoOffline";
 import { FileUpload } from "@/components/FileUpload";
 import { MessageList } from "@/components/MessageList";
 import { Button } from "@/components/ui/button";
+import { BACKEND_REPOS, ragApiBase } from "@/lib/backends";
+import { RAG_EXAMPLE } from "@/lib/demo-recordings";
+import {
+  healthOk,
+  isNetworkError,
+  useServiceStatus,
+} from "@/lib/use-service-status";
 import type { VectorStoreId } from "@/lib/vector-store";
 
-const apiBase =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const RAG_SERVICE = "RAG API";
 
 function textFromUserMessage(message: UIMessage): string {
   return message.parts
@@ -21,6 +29,19 @@ function textFromUserMessage(message: UIMessage): string {
     )
     .map((part) => part.text)
     .join("");
+}
+
+function RagExample() {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-primary">
+        {RAG_EXAMPLE.filename}: {RAG_EXAMPLE.chunks} chunks indexed
+      </p>
+      {RAG_EXAMPLE.messages.map((m) => (
+        <ChatMessage key={m.id} message={m} />
+      ))}
+    </div>
+  );
 }
 
 export function RagDemoPanel({
@@ -32,13 +53,17 @@ export function RagDemoPanel({
   title: string;
   description?: string;
 }) {
+  const service = useServiceStatus(
+    ragApiBase ? `${ragApiBase}/health` : null,
+    healthOk,
+  );
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
   const [uploadKey, setUploadKey] = useState(0);
 
   const transport = useMemo(
     () =>
       new TextStreamChatTransport({
-        api: `${apiBase}/chat`,
+        api: `${ragApiBase ?? ""}/chat`,
         prepareSendMessagesRequest: ({ messages }) => {
           const lastUser = [...messages]
             .reverse()
@@ -60,19 +85,28 @@ export function RagDemoPanel({
     ? `rag-${vectorStore}-${activeDocId}`
     : `rag-${vectorStore}-pending`;
 
-  const { messages, sendMessage, status, setMessages } = useChat({
-    id: chatId,
-    transport,
-  });
+  const { messages, sendMessage, status, setMessages, error, clearError } =
+    useChat({
+      id: chatId,
+      transport,
+      onError(err) {
+        if (isNetworkError(err)) service.markOffline();
+      },
+    });
   const [input, setInput] = useState("");
 
   const isLoading = status === "submitted" || status === "streaming";
+
+  function send(text: string) {
+    clearError();
+    sendMessage({ text });
+  }
 
   function submitMessage() {
     const text = input.trim();
     if (!text || isLoading) return;
     setInput("");
-    sendMessage({ text });
+    send(text);
   }
 
   return (
@@ -88,12 +122,13 @@ export function RagDemoPanel({
             </p>
           ) : null}
         </div>
-        {messages.length > 0 && (
+        {service.status === "online" && messages.length > 0 && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => {
+              clearError();
               setMessages([]);
               setActiveDocId(null);
               setUploadKey((k) => k + 1);
@@ -105,31 +140,55 @@ export function RagDemoPanel({
         )}
       </header>
 
-      <FileUpload
-        key={uploadKey}
-        vectorStore={vectorStore}
-        onIndexed={(doc) => setActiveDocId(doc.doc_id)}
-      />
+      {service.status === "checking" ? (
+        <DemoChecking service={RAG_SERVICE} />
+      ) : service.reason ? (
+        <DemoOffline
+          service={RAG_SERVICE}
+          reason={service.reason}
+          repoUrl={BACKEND_REPOS.rag}
+          onRetry={service.retry}
+        >
+          <RagExample />
+        </DemoOffline>
+      ) : (
+        <>
+          <FileUpload
+            key={uploadKey}
+            apiBase={ragApiBase ?? ""}
+            vectorStore={vectorStore}
+            onIndexed={(doc) => setActiveDocId(doc.doc_id)}
+            onNetworkError={() => service.markOffline()}
+          />
 
-      <MessageList
-        messages={messages}
-        isLoading={isLoading}
-        suggestionsDisabled={!activeDocId}
-        onSendText={(text) => sendMessage({ text })}
-      />
+          <MessageList
+            messages={messages}
+            isLoading={isLoading}
+            suggestionsDisabled={!activeDocId}
+            onSendText={send}
+          />
 
-      <ChatInput
-        value={input}
-        onChange={setInput}
-        onSend={submitMessage}
-        isLoading={isLoading}
-        disabled={!activeDocId}
-        placeholder={
-          activeDocId
-            ? "Ask a question about your uploaded document… (Enter to send, Shift+Enter for new line)"
-            : "Upload a PDF above, then ask a question…"
-        }
-      />
+          {error && !isNetworkError(error) ? (
+            <p role="alert" className="mb-3 text-sm text-destructive">
+              The RAG API could not answer that question. Please try again.
+            </p>
+          ) : null}
+
+          <ChatInput
+            value={input}
+            onChange={setInput}
+            onSend={submitMessage}
+            isLoading={isLoading}
+            disabled={!activeDocId}
+            label="Ask about your document"
+            placeholder={
+              activeDocId
+                ? "Ask a question about your uploaded document… (Enter to send, Shift+Enter for new line)"
+                : "Upload a PDF above, then ask a question…"
+            }
+          />
+        </>
+      )}
     </div>
   );
 }

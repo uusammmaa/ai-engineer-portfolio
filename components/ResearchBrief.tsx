@@ -67,7 +67,7 @@ export function ResearchBriefCard({ brief }: { brief: ResearchBrief }) {
           {brief.role}
         </CardTitle>
         <CardDescription>
-          {brief.company} — {brief.location}
+          {brief.company} · {brief.location}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">

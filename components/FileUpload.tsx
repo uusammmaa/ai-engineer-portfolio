@@ -12,8 +12,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { VectorStoreId } from "@/lib/vector-store";
 
-const apiBase =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+/** Keeps uploads to the hosted demo small; the API itself has no cap. */
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 export type IndexedDocument = {
   doc_id: string;
@@ -22,12 +22,17 @@ export type IndexedDocument = {
 };
 
 export function FileUpload({
+  apiBase,
   vectorStore,
   onIndexed,
+  onNetworkError,
 }: {
+  apiBase: string;
   vectorStore?: VectorStoreId;
   onIndexed?: (doc: IndexedDocument) => void;
-} = {}) {
+  /** Called when the API cannot be reached at all. */
+  onNetworkError?: () => void;
+}) {
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<{
     filename: string;
@@ -39,6 +44,12 @@ export function FileUpload({
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setResult(null);
+      setError("PDFs are limited to 10 MB in this demo.");
+      return;
+    }
 
     setUploading(true);
     setError(null);
@@ -91,7 +102,8 @@ export function FileUpload({
         setError("Unexpected response from server");
       }
     } catch {
-      setError("Network error — is the API running?");
+      setError("Could not reach the RAG API.");
+      onNetworkError?.();
     } finally {
       setUploading(false);
     }
@@ -100,13 +112,17 @@ export function FileUpload({
   return (
     <Card size="sm" className="mb-4 border-border/60 bg-card/50">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Upload a PDF document</CardTitle>
-        <CardDescription>
-          Index the file before asking questions in the chat below.
+        <CardTitle className="text-base">
+          <label htmlFor="rag-pdf-upload">Upload a PDF document</label>
+        </CardTitle>
+        <CardDescription id="rag-pdf-upload-hint">
+          Text-based PDFs up to 10 MB. Index the file before asking questions in
+          the chat below.
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
         <input
+          aria-describedby="rag-pdf-upload-hint"
           id="rag-pdf-upload"
           type="file"
           accept=".pdf,application/pdf"
@@ -115,19 +131,24 @@ export function FileUpload({
           className={cn(
             "block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground",
             "hover:file:bg-primary/90 disabled:opacity-50",
+            "rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           )}
         />
-        {uploading && (
-          <p className="mt-2 text-sm text-muted-foreground">Processing…</p>
-        )}
-        {error && (
-          <p className="mt-2 text-sm text-destructive">{error}</p>
-        )}
-        {result && (
-          <p className="mt-2 text-sm text-primary">
-            {result.filename} — {result.chunks} chunks indexed
-          </p>
-        )}
+        <div aria-live="polite">
+          {uploading && (
+            <p className="mt-2 text-sm text-muted-foreground">Processing…</p>
+          )}
+          {error && (
+            <p role="alert" className="mt-2 text-sm text-destructive">
+              {error}
+            </p>
+          )}
+          {result && (
+            <p className="mt-2 text-sm text-primary">
+              {result.filename}: {result.chunks} chunks indexed
+            </p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
