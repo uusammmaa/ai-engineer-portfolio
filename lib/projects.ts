@@ -7,10 +7,10 @@ export type Project = {
   outcome: string;
   stack: string[];
   eval: {
+    /** Short tag shown before the headline, e.g. "mock eval". */
+    label: string;
     headline: string;
     detail: string;
-    /** "measured" = a number the repo's own harness produces today. */
-    status: "measured" | "in-progress";
   };
   demos: { href: string; label: string }[];
 };
@@ -20,20 +20,20 @@ export const PROJECTS: Project[] = [
     name: "RAG Document Chat API",
     repoUrl: BACKEND_REPOS.rag,
     outcome:
-      "Upload a text PDF and get streamed answers grounded only in that document, on Pinecone or Supabase pgvector behind one API.",
+      "Upload a text PDF and get streamed answers grounded only in that document, on Pinecone or Postgres pgvector (local or Supabase) behind one API.",
     stack: [
       "FastAPI",
-      "Claude Haiku 4.5",
+      "Claude Haiku 5.5",
       "OpenAI embeddings",
       "Pinecone",
-      "Supabase pgvector",
-      "LangChain splitters",
+      "pgvector (psycopg)",
+      "Docker",
     ],
     eval: {
-      headline: "Eval suite in progress",
+      label: "mock eval",
+      headline: "Recursive chunking, k=5: recall@5 0.798, MRR 0.577",
       detail:
-        "Retrieval is scoped per document (top 5 chunks) and the prompt refuses when the context lacks the answer. Retrieval hit rate and groundedness scoring are next.",
-      status: "in-progress",
+        "Best of fixed, recursive and heading-based chunking at k=3 and k=5, scored on 38 labelled questions over 3 public-domain PDFs. Mock mode runs offline in CI with lexical embeddings; live numbers come from make eval-live.",
     },
     demos: [
       { href: "/rag", label: "Pinecone demo" },
@@ -44,20 +44,21 @@ export const PROJECTS: Project[] = [
     name: "AI Research Agent",
     repoUrl: BACKEND_REPOS.agent,
     outcome:
-      "Turns a job posting URL into a structured research brief (stack, requirements, culture signals, talking points, red flags) while streaming every tool call.",
+      "Turns a job posting URL into a structured research brief where every claim cites a retrieved source and quote, streaming each tool call and the run's token cost.",
     stack: [
       "FastAPI",
       "Claude tool use",
       "Tavily search",
-      "BeautifulSoup",
       "Pydantic",
+      "OpenTelemetry",
       "NDJSON streaming",
     ],
     eval: {
-      headline: "8/8 mocked eval cases pass",
+      label: "evals + tests",
+      headline:
+        "18 mock evals incl. citation-accuracy and groundedness checks, 105 tests",
       detail:
-        "Covers fenced and prose-wrapped JSON, malformed output, missing fields, the iteration cap, unexpected stop reasons and tool-error recovery. A live suite runs the real loop against current postings.",
-      status: "measured",
+        "Scripted runs exercise retries, model fallback, brief repair and timeouts for real, and three cases plant a fabricated quote, a misattributed source or a changed number that the scorer must flag. A live suite runs against current postings.",
     },
     demos: [{ href: "/agent", label: "Agent demo" }],
   },

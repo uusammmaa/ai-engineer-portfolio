@@ -60,16 +60,13 @@ export function Projects() {
               <div className="rounded-lg border border-border/70 bg-background/40 p-3">
                 <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <FlaskConical
-                    className={cn(
-                      "size-4 shrink-0",
-                      p.eval.status === "measured"
-                        ? "text-primary"
-                        : "text-accent",
-                    )}
+                    className="mt-0.5 size-4 shrink-0 self-start text-primary"
                     aria-hidden
                   />
                   <span>
-                    <span className="sr-only">Eval: </span>
+                    <span className="mr-2 inline-block rounded-full border border-primary/40 px-2 py-px text-[0.7rem] font-medium uppercase tracking-wider text-primary">
+                      {p.eval.label}
+                    </span>
                     {p.eval.headline}
                   </span>
                 </p>

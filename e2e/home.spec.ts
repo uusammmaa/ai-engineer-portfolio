@@ -29,7 +29,12 @@ test.describe("home", () => {
       ),
     ).toBeVisible();
     await expect(
-      projects.getByText("8/8 mocked eval cases pass"),
+      projects.getByText("Recursive chunking, k=5: recall@5 0.798, MRR 0.577"),
+    ).toBeVisible();
+    await expect(
+      projects.getByText(
+        "18 mock evals incl. citation-accuracy and groundedness checks, 105 tests",
+      ),
     ).toBeVisible();
 
     await expect(page.locator("#contact")).toBeAttached();
