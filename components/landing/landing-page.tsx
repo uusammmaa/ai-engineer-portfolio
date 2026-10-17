@@ -23,7 +23,7 @@ export function LandingPage() {
   return (
     <>
       <SiteHeader />
-      <main className="font-body">
+      <main id="main" tabIndex={-1} className="font-body outline-none">
         <Hero />
         <Projects />
         <Services />
@@ -40,7 +40,7 @@ export function LandingPage() {
           © {new Date().getFullYear()} Usama Akram · Lahore · Remote ·{" "}
           <a
             href="https://github.com/uusammmaa"
-            className="text-primary hover:underline"
+            className="rounded-sm text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             target="_blank"
             rel="noreferrer"
           >

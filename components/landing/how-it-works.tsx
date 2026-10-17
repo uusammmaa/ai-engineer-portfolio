@@ -88,11 +88,10 @@ export function HowItWorks() {
               className="relative flex min-h-[200px] flex-1 flex-col rounded-xl border border-border/80 bg-card/50 p-6 md:min-w-[min(100%,380px)] md:max-w-md md:shrink-0 md:p-8"
             >
               <span
-                className="font-display text-5xl text-foreground/[0.07] md:text-6xl"
+                className="decorative-index font-display text-5xl text-foreground/[0.07] md:text-6xl"
+                data-index={String(i + 1).padStart(2, "0")}
                 aria-hidden
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
+              />
               <step.Icon
                 className="mt-2 size-10 text-primary"
                 weight="duotone"

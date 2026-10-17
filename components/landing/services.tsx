@@ -86,7 +86,7 @@ export function Services() {
                   <item.icon className="size-5" aria-hidden />
                 </div>
                 <CardTitle className="font-display text-lg leading-snug tracking-wide md:text-xl">
-                  {item.title}
+                  <h3>{item.title}</h3>
                 </CardTitle>
                 <CardDescription className="text-sm leading-relaxed text-muted-foreground">
                   {item.description}

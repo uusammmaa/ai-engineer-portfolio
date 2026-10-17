@@ -78,7 +78,7 @@ export async function CaseStudies() {
             </div>
             <CardHeader>
               <CardTitle className="font-display text-xl tracking-wide md:text-2xl">
-                {c.title}
+                <h3>{c.title}</h3>
               </CardTitle>
               <CardDescription className="text-sm leading-relaxed text-muted-foreground">
                 {c.summary}

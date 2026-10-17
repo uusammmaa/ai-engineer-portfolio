@@ -2,17 +2,17 @@ export const DEMO_NAV = [
   {
     href: "/",
     label: "Home",
-    description: "Back to portfolio & contact",
+    description: "Portfolio, projects and contact",
   },
   { href: "/coach", label: "Coach", description: "Next.js + streaming LLM" },
   {
     href: "/rag",
-    label: "RAG — Pinecone",
+    label: "RAG · Pinecone",
     description: "FastAPI RAG + PDF + Pinecone",
   },
   {
     href: "/rag-supabase",
-    label: "RAG — Supabase",
+    label: "RAG · Supabase",
     description: "Same pipeline + pgvector in Postgres",
   },
   {
