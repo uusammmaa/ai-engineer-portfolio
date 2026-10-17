@@ -5,6 +5,7 @@ import { useState } from "react";
 import { AgentSteps } from "@/components/AgentSteps";
 import { DemoChecking, DemoOffline } from "@/components/DemoOffline";
 import { ResearchBriefCard } from "@/components/ResearchBrief";
+import { RunSummaryCard } from "@/components/RunSummaryCard";
 import { Button } from "@/components/ui/button";
 import { agentApiBase, BACKEND_REPOS } from "@/lib/backends";
 import { AGENT_EXAMPLE } from "@/lib/demo-recordings";
@@ -21,6 +22,7 @@ function AgentExample() {
           Job URL: {AGENT_EXAMPLE.jobUrl}
         </p>
         <AgentSteps steps={AGENT_EXAMPLE.steps} />
+        <RunSummaryCard summary={AGENT_EXAMPLE.summary} />
       </div>
       <ResearchBriefCard brief={AGENT_EXAMPLE.brief} />
     </div>
@@ -33,10 +35,11 @@ export function AgentDemoPanel() {
     healthOk,
   );
   const [url, setUrl] = useState("");
-  const { steps, brief, error, running, run, reset } = useAgentStream({
-    apiBase: agentApiBase,
-    onNetworkError: service.markOffline,
-  });
+  const { steps, brief, summary, error, urlError, running, run, reset } =
+    useAgentStream({
+      apiBase: agentApiBase,
+      onOffline: service.markOffline,
+    });
 
   const hasResults = steps.length > 0 || brief !== null;
 
@@ -63,7 +66,7 @@ export function AgentDemoPanel() {
             company, and streams each tool step in real time.
           </p>
         </div>
-        {service.status === "online" && hasResults ? (
+        {service.status === "online" && (hasResults || summary) ? (
           <Button
             type="button"
             variant="ghost"
@@ -90,23 +93,36 @@ export function AgentDemoPanel() {
         </DemoOffline>
       ) : (
         <>
-          <form onSubmit={handleSubmit} className="mb-6 flex gap-2">
-            <label htmlFor="agent-job-url" className="sr-only">
-              Job posting URL
-            </label>
-            <input
-              id="agent-job-url"
-              type="url"
-              required
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://jobs.example.com/senior-engineer"
-              disabled={running}
-              className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-            />
-            <Button type="submit" disabled={running || !url.trim()}>
-              {running ? "Running…" : "Research"}
-            </Button>
+          <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-2">
+            <div className="flex gap-2">
+              <label htmlFor="agent-job-url" className="sr-only">
+                Job posting URL
+              </label>
+              <input
+                id="agent-job-url"
+                type="url"
+                required
+                aria-invalid={urlError ? true : undefined}
+                aria-describedby={urlError ? "agent-job-url-error" : undefined}
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://jobs.example.com/senior-engineer"
+                disabled={running}
+                className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 aria-invalid:border-destructive"
+              />
+              <Button type="submit" disabled={running || !url.trim()}>
+                {running ? "Running…" : "Research"}
+              </Button>
+            </div>
+            {urlError ? (
+              <p
+                id="agent-job-url-error"
+                role="alert"
+                className="text-sm text-destructive"
+              >
+                {urlError}
+              </p>
+            ) : null}
           </form>
 
           {error ? (
@@ -133,6 +149,7 @@ export function AgentDemoPanel() {
                 </p>
               ) : null}
               <AgentSteps steps={steps} />
+              {summary ? <RunSummaryCard summary={summary} /> : null}
             </div>
 
             {brief ? (

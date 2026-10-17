@@ -13,6 +13,7 @@ import { MessageList } from "@/components/MessageList";
 import { Button } from "@/components/ui/button";
 import { BACKEND_REPOS, ragApiBase } from "@/lib/backends";
 import { RAG_EXAMPLE } from "@/lib/demo-recordings";
+import { parseRagError } from "@/lib/rag-errors";
 import {
   healthOk,
   isNetworkError,
@@ -170,7 +171,8 @@ export function RagDemoPanel({
 
           {error && !isNetworkError(error) ? (
             <p role="alert" className="mb-3 text-sm text-destructive">
-              The RAG API could not answer that question. Please try again.
+              {parseRagError(error.message).message ??
+                "The RAG API could not answer that question. Please try again."}
             </p>
           ) : null}
 

@@ -4,6 +4,7 @@ import {
   AlertCircle,
   CheckCircle2,
   FileText,
+  RotateCcw,
   Wrench,
   type LucideIcon,
 } from "lucide-react";
@@ -24,6 +25,10 @@ const stepConfig: Record<
     icon: FileText,
     className: "border-border bg-muted/40",
   },
+  repair: {
+    icon: RotateCcw,
+    className: "border-accent/30 bg-accent/5",
+  },
   complete: {
     icon: CheckCircle2,
     className: "border-green-500/30 bg-green-500/5",
@@ -31,6 +36,10 @@ const stepConfig: Record<
   error: {
     icon: AlertCircle,
     className: "border-destructive/30 bg-destructive/5",
+  },
+  run_summary: {
+    icon: CheckCircle2,
+    className: "border-border bg-muted/40",
   },
 };
 
@@ -51,10 +60,14 @@ export function AgentSteps({ steps }: { steps: AgentStep[] }) {
           >
             <CardContent className="flex flex-col gap-1 pt-0">
               <div className="flex items-center gap-2 font-medium text-foreground">
-                <Icon className="size-4 shrink-0 text-muted-foreground" />
+                <Icon
+                  className="size-4 shrink-0 text-muted-foreground"
+                  aria-hidden
+                />
                 <span className="text-sm">{step.message}</span>
               </div>
-              {step.type === "tool_result" && step.output ? (
+              {(step.type === "tool_result" || step.type === "repair") &&
+              step.output ? (
                 <p className="truncate pl-6 text-xs text-muted-foreground">
                   {step.output}
                 </p>

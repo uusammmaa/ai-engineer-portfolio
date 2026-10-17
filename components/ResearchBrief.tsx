@@ -6,8 +6,67 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
+
+import { isHttpUrl } from "@/lib/agent-parse";
+import type { Claim, ResearchBrief } from "@/lib/agent-types";
 import { cn } from "@/lib/utils";
-import type { ResearchBrief } from "@/lib/agent-types";
+
+function hostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function SourceLink({ url, className }: { url: string; className?: string }) {
+  if (!isHttpUrl(url)) return <span className={className}>{url}</span>;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className={cn(
+        "inline-flex max-w-full items-center gap-1 rounded-sm text-primary underline underline-offset-4 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        className,
+      )}
+    >
+      <span className="truncate">{hostname(url)}</span>
+      <ArrowUpRight className="size-3 shrink-0" aria-hidden />
+      <span className="sr-only">(opens in a new tab)</span>
+    </a>
+  );
+}
+
+function ClaimsSection({ claims }: { claims: Claim[] }) {
+  if (claims.length === 0) return null;
+  return (
+    <div>
+      <h3 className="mb-2 text-sm font-semibold text-foreground">
+        Claims and evidence
+      </h3>
+      <ol className="space-y-3">
+        {claims.map((claim, i) => (
+          <li
+            key={i}
+            className="rounded-lg border border-border/70 bg-background/40 p-3"
+          >
+            <p className="text-sm text-foreground">{claim.statement}</p>
+            {claim.quote ? (
+              <blockquote className="mt-2 border-l-2 border-primary/50 pl-3 text-xs italic leading-relaxed text-muted-foreground">
+                &ldquo;{claim.quote}&rdquo;
+              </blockquote>
+            ) : null}
+            <p className="mt-2 text-xs text-muted-foreground">
+              Source: <SourceLink url={claim.source} />
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
 
 function BriefSection({
   title,
@@ -49,7 +108,9 @@ function BriefSection({
                     : "text-muted-foreground",
               )}
             >
-              <span className="shrink-0">{danger ? "!" : highlight ? "→" : "•"}</span>
+              <span className="shrink-0">
+                {danger ? "!" : highlight ? "→" : "•"}
+              </span>
               <span>{item}</span>
             </li>
           ))}
@@ -82,6 +143,7 @@ export function ResearchBriefCard({ brief }: { brief: ResearchBrief }) {
           </p>
         </div>
         <BriefSection title="Culture Signals" items={brief.culture_signals} />
+        <ClaimsSection claims={brief.claims} />
         <BriefSection
           title="Talking Points for Application"
           items={brief.talking_points}
@@ -91,7 +153,18 @@ export function ResearchBriefCard({ brief }: { brief: ResearchBrief }) {
           <BriefSection title="Red Flags" items={brief.red_flags} danger />
         ) : null}
         {brief.sources.length > 0 ? (
-          <BriefSection title="Sources" items={brief.sources} />
+          <div>
+            <h3 className="mb-2 text-sm font-semibold text-foreground">
+              Sources
+            </h3>
+            <ul className="space-y-1.5 text-sm">
+              {brief.sources.map((url, i) => (
+                <li key={`${i}-${url}`} className="min-w-0">
+                  <SourceLink url={url} />
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
       </CardContent>
     </Card>

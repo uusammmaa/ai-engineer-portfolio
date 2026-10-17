@@ -1,6 +1,6 @@
 import type { UIMessage } from "ai";
 
-import type { AgentStep, ResearchBrief } from "@/lib/agent-types";
+import type { AgentStep, ResearchBrief, RunSummary } from "@/lib/agent-types";
 
 /**
  * Example outputs shown when a demo backend is offline. Each one matches the
@@ -63,11 +63,14 @@ The policy does not say whether unused remote days roll over to the next week.`,
 };
 
 const AGENT_JOB_URL = "https://jobs.example.com/senior-ai-engineer";
+const AGENT_BLOG_URL = "https://blog.example.com/evals-before-upgrades";
+const AGENT_REVIEWS_URL = "https://reviews.example.com/developer-platform";
 
 export const AGENT_EXAMPLE: {
   jobUrl: string;
   steps: AgentStep[];
   brief: ResearchBrief;
+  summary: RunSummary;
 } = {
   jobUrl: AGENT_JOB_URL,
   steps: [
@@ -141,10 +144,49 @@ export const AGENT_EXAMPLE: {
     red_flags: [
       "Recent on-call rotation change; ask how incidents are staffed",
     ],
-    sources: [
-      AGENT_JOB_URL,
-      "https://blog.example.com/evals-before-upgrades",
-      "https://reviews.example.com/developer-platform",
+    sources: [AGENT_JOB_URL, AGENT_BLOG_URL, AGENT_REVIEWS_URL],
+    claims: [
+      {
+        statement: "The role is remote for EMEA and APAC time zones.",
+        source: AGENT_JOB_URL,
+        quote: "Senior AI Engineer (Remote, EMEA/APAC).",
+      },
+      {
+        statement:
+          "The engineering team runs evals before every model upgrade.",
+        source: AGENT_BLOG_URL,
+        quote: "how we run evals before every model upgrade",
+      },
+      {
+        statement: "The on-call rotation changed recently.",
+        source: AGENT_REVIEWS_URL,
+        quote: "a recent on-call rotation change",
+      },
     ],
+  },
+  // Priced like the backend does: claude-opus-5-5 at $4 / $20 per million tokens.
+  summary: {
+    status: "complete",
+    elapsed_seconds: 41.3,
+    llm_calls: 4,
+    tool_calls: 3,
+    repairs: 0,
+    usage: {
+      input_tokens: 15_800,
+      output_tokens: 1_610,
+      cost_usd: 0.0954,
+      cost_known: true,
+      by_model: {
+        "claude-opus-5-5": {
+          calls: 4,
+          input_tokens: 15_800,
+          output_tokens: 1_610,
+          cache_read_tokens: 0,
+          cache_write_tokens: 0,
+          cost_usd: 0.0954,
+          cost_known: true,
+        },
+      },
+    },
   },
 };
