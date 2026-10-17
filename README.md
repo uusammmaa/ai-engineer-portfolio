@@ -9,8 +9,8 @@ Portfolio site with four live AI demos: a streaming Claude coach, retrieval-augm
 
 | Backend | What it does | Eval headline |
 | --- | --- | --- |
-| [rag-api-pgvector-pinecone](https://github.com/uusammmaa/rag-api-pgvector-pinecone) | Upload a text PDF, get streamed answers grounded only in that document, on Pinecone or pgvector behind one API. | Eval suite in progress |
-| [ai-research-agent](https://github.com/uusammmaa/ai-research-agent) | Turns a job posting URL into a structured research brief while streaming every tool call. | 8/8 mocked eval cases pass |
+| [rag-api-pgvector-pinecone](https://github.com/uusammmaa/rag-api-pgvector-pinecone) | Upload a text PDF, get streamed answers grounded only in that document, on Pinecone or pgvector behind one API. | Mock eval, recursive chunking, k=5: recall@5 0.798, MRR 0.577 |
+| [ai-research-agent](https://github.com/uusammmaa/ai-research-agent) | Turns a job posting URL into a research brief where every claim cites a retrieved source and quote, streaming each tool call and the run's cost. | 18 mock evals incl. citation-accuracy and groundedness checks, 105 tests |
 
 ## Screenshots
 
@@ -28,7 +28,7 @@ Portfolio site with four live AI demos: a streaming Claude coach, retrieval-augm
 | `/coach` | Streaming career coach (Claude Haiku 4.5 or GPT-5 mini) | `POST /api/chat` in this app |
 | `/rag` | PDF upload and Q&A, vectors in Pinecone | RAG API `/upload`, `/chat` |
 | `/rag-supabase` | Same pipeline, vectors in Postgres via pgvector | RAG API with `vector_store=supabase` |
-| `/agent` | Job posting research agent with live tool steps | Agent API `/agent/run` (NDJSON stream) |
+| `/agent` | Job posting research agent: live tool steps, cited claims, run cost | Agent API `/agent/run` (NDJSON stream) |
 
 ## Architecture
 
@@ -45,8 +45,8 @@ flowchart LR
     ragEp["/health · /upload · /chat"]
     embed["OpenAI embeddings"]
     pine[("Pinecone")]
-    pg[("Supabase pgvector")]
-    ragLlm["Claude Haiku 4.5"]
+    pg[("Postgres pgvector<br/>(Supabase)")]
+    ragLlm["Claude Haiku 5.5"]
   end
 
   subgraph agent["Research agent API (FastAPI)"]
@@ -70,7 +70,8 @@ flowchart LR
 ```
 
 - **Coach** stays inside this app: `useChat` posts the thread to `/api/chat`, which streams back an AI SDK UI message stream. API keys never reach the browser.
-- **RAG and agent demos** call the FastAPI services directly from the browser, so each backend must allow this site's origin in CORS. Upload returns a `doc_id`; every question is scoped to that document's top 5 chunks.
+- **RAG and agent demos** call the FastAPI services directly from the browser, so each backend must allow this site's origin in CORS (see [Deploy](#deploy-to-vercel)). Upload returns a `doc_id`; every question is scoped to that document's top 5 chunks. Upload errors come back as `{ "error": { "code", "message" } }`: a non-PDF (415) and a password-protected, scanned or unparseable PDF (422) are shown inline with the API's explanation.
+- **Agent stream:** each NDJSON line is a step (`tool_call`, `tool_result`, `repair`, `complete`, `error`). The brief carries `claims` (statement, source URL, verbatim quote), rendered with links to their sources, and the last line is a `run_summary` with tokens and cost per model, shown as the run cost. A job URL that is not http(s) gets a 422, shown under the input.
 - **Resilience:** before showing a demo, the page probes its backend (`GET /health` for FastAPI, `GET /api/chat` for the coach, 10 s timeout). If the URL is unset, the probe fails, or a request later fails at the network level, the demo switches to a "Demo offline" banner with a retry button, a link to the backend's source, and an example of the output (`lib/demo-recordings.ts`).
 
 ### `/api/chat` limits
@@ -113,8 +114,8 @@ npm run dev                  # http://localhost:3000
 Follow each repo's README, then point the frontend at them:
 
 ```bash
-# RAG API: http://localhost:8000 (its CORS allows http://localhost:3000)
-uvicorn main:app --reload --port 8000
+# RAG API: http://localhost:8000 (CORS_ORIGINS defaults to http://localhost:3000)
+uvicorn app.main:app --reload --port 8000
 
 # Research agent API: http://localhost:8010 (set CORS_ORIGINS to include http://localhost:3000)
 uvicorn main:app --reload --port 8010
@@ -132,9 +133,10 @@ uvicorn main:app --reload --port 8010
 
 ## Testing and CI
 
-`e2e/` holds 23 Playwright tests run against a production build:
+`e2e/` holds 27 Playwright tests run against a production build:
 
-- **Every route:** each demo renders its offline state and example when its backend is unreachable, and its happy path works when the backend is mocked (coach streaming reply, RAG upload and answer, agent steps and brief, mid-session failure).
+- **Every route:** each demo renders its offline state and example when its backend is unreachable, and its happy path works when the backend is mocked (coach streaming reply, RAG upload and answer, agent steps with a repair, cited claims and run cost, mid-session failure).
+- **Backend errors:** RAG uploads rejected with 415 (not a PDF) and 422 (password-protected) show the API's message inline; the agent's 422 for a non-http(s) job URL is shown under the input, and its 503 switches the demo offline.
 - **API:** `/api/chat` returns 400, 413, 429 and 503 where it should.
 - **SEO:** title, description, canonical, Open Graph and Twitter tags, OG image, sitemap and robots.
 - **Accessibility:** axe-core (WCAG 2.1 A and AA) on all five pages fails the build on any serious or critical violation; skip link and mobile menu are checked by keyboard.
@@ -155,7 +157,7 @@ npm run test:e2e
    - `ANTHROPIC_API_KEY` and/or `OPEN_AI_API_KEY`
    - `NEXT_PUBLIC_SITE_URL` set to the production URL
    - `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_AGENT_API_URL` set to the deployed FastAPI services (HTTPS)
-3. Allow the Vercel origin in each backend's CORS settings. The agent reads `CORS_ORIGINS` (comma separated). The RAG API currently hard-codes `http://localhost:3000` in `main.py`, so add the production origin there before going live.
+3. **Add the Vercel domain to both backends' CORS allowlists.** The browser calls the FastAPI services directly, so without this the RAG and agent demos fail their health check and show the offline state. Both read `CORS_ORIGINS` (comma separated, default `http://localhost:3000`), for example `CORS_ORIGINS=https://your-domain.com,https://your-project.vercel.app`. Include any preview domain you want the demos to work on.
 4. Redeploy after changing any `NEXT_PUBLIC_*` value: they are inlined at build time.
 5. If a backend is not deployed yet, leave its URL unset. The matching demo shows the offline state with example output instead of erroring.
 
