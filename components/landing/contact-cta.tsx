@@ -5,7 +5,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const contactEmail =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@jezerox.com";
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL || "usamaakram17@gmail.com";
+
+const linkedInUrl = "https://www.linkedin.com/in/usama-akram17";
+const githubUrl = "https://github.com/uusammmaa";
 
 export function ContactCta() {
   return (
@@ -25,7 +28,7 @@ export function ContactCta() {
             Next step
           </p>
           <h2 className="font-display mt-3 text-4xl leading-[0.95] tracking-tight text-foreground md:text-6xl">
-            Ready to add AI to your business?
+            Ready to add AI to your product?
           </h2>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
             Tell me about the workflow, product surface, or KPI you want to move.
@@ -40,16 +43,16 @@ export function ContactCta() {
             className="mt-8 flex flex-wrap gap-3"
           >
             <a
-              href={`mailto:${contactEmail}?subject=Project%20inquiry%20%E2%80%94%20Jezerox`}
+              href={`mailto:${contactEmail}?subject=Project%20inquiry%20%E2%80%94%20Usama%20Akram`}
               className={cn(
                 buttonVariants({ size: "lg" }),
                 "h-11 px-8 text-base shadow-lg shadow-primary/15"
               )}
             >
-              Email Jezerox
+              Email me
             </a>
             <a
-              href="https://jezerox.com"
+              href={linkedInUrl}
               target="_blank"
               rel="noreferrer"
               className={cn(
@@ -57,7 +60,18 @@ export function ContactCta() {
                 "h-11 border-primary/35 bg-background/30 px-8 text-base backdrop-blur-sm"
               )}
             >
-              jezerox.com
+              LinkedIn
+            </a>
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "h-11 border-primary/35 bg-background/30 px-8 text-base backdrop-blur-sm"
+              )}
+            >
+              GitHub
             </a>
           </motion.div>
         </div>

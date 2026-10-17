@@ -33,7 +33,7 @@ export function SiteHeader() {
             Usama Akram
           </span>
           <span className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground group-hover:text-primary">
-            Jezerox · Lahore
+            AI Engineer · Lahore · Remote
           </span>
         </Link>
 

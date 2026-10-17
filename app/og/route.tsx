@@ -19,15 +19,17 @@ export async function GET() {
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <span style={{ fontSize: 28, letterSpacing: "0.2em", color: "#c9a227" }}>JEZEROX</span>
-          <span style={{ fontSize: 22, color: "#2dd4bf" }}>Lahore · PK</span>
+          <span style={{ fontSize: 28, letterSpacing: "0.15em", color: "#c9a227" }}>
+            USAMA AKRAM
+          </span>
+          <span style={{ fontSize: 22, color: "#2dd4bf" }}>Lahore · Remote</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ fontSize: 64, fontWeight: 800, lineHeight: 1.05, maxWidth: 900 }}>
-            I build AI that works for your business.
+          <div style={{ fontSize: 56, fontWeight: 800, lineHeight: 1.05, maxWidth: 900 }}>
+            I build AI systems that run in production.
           </div>
           <div style={{ fontSize: 28, color: "rgba(244,241,234,0.75)", maxWidth: 800 }}>
-            Usama Akram — AI Architect & Full-Stack Engineer
+            AI Engineer
           </div>
         </div>
         <div style={{ fontSize: 22, color: "rgba(244,241,234,0.55)" }}>

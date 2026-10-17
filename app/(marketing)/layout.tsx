@@ -14,20 +14,20 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Usama Akram — AI Architect & Full-Stack Engineer | Jezerox",
-    template: "%s | Jezerox",
+    default: "Usama Akram — AI Engineer",
+    template: "%s | Usama Akram",
   },
   description:
-    "Senior AI architect and full-stack engineer in Lahore, PK. Jezerox builds intelligent software—AI assistants, agentic systems, RAG, and production AI SaaS—for ambitious businesses.",
+    "Usama Akram, AI Engineer in Lahore (remote). I build AI systems that run in production—assistants, RAG, and agentic workflows.",
   keywords: [
-    "AI architect",
-    "full-stack engineer",
+    "AI engineer",
+    "LLM",
     "LangGraph",
     "Next.js",
     "FastAPI",
     "RAG",
-    "Jezerox",
     "Lahore",
+    "remote",
     "Claude API",
   ],
   authors: [{ name: "Usama Akram", url: siteUrl }],
@@ -36,17 +36,17 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_PK",
     url: siteUrl,
-    siteName: "Jezerox",
-    title: "Usama Akram — AI Architect & Full-Stack Engineer",
+    siteName: "Usama Akram",
+    title: "Usama Akram — AI Engineer",
     description:
-      "I build AI that works for your business. Custom assistants, agentic pipelines, RAG, and end-to-end AI products.",
-    images: [{ url: "/og", width: 1200, height: 630, alt: "Jezerox" }],
+      "I build AI systems that run in production. Lahore · remote.",
+    images: [{ url: "/og", width: 1200, height: 630, alt: "Usama Akram" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Usama Akram — AI Architect & Full-Stack Engineer",
+    title: "Usama Akram — AI Engineer",
     description:
-      "Intelligent software for ambitious businesses. Lahore, PK — Jezerox.",
+      "I build AI systems that run in production. Lahore · remote.",
     images: [`${siteUrl}/og`],
   },
   alternates: {
@@ -56,26 +56,19 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Person",
-      name: "Usama Akram",
-      jobTitle: "AI Architect & Full-Stack Engineer",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Lahore",
-        addressCountry: "PK",
-      },
-      url: siteUrl,
-      worksFor: { "@id": `${siteUrl}#organization` },
-    },
-    {
-      "@type": "Organization",
-      "@id": `${siteUrl}#organization`,
-      name: "Jezerox",
-      url: "https://jezerox.com",
-      description: "Building intelligent software for ambitious businesses.",
-    },
+  "@type": "Person",
+  name: "Usama Akram",
+  jobTitle: "AI Engineer",
+  email: "usamaakram17@gmail.com",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Lahore",
+    addressCountry: "PK",
+  },
+  url: siteUrl,
+  sameAs: [
+    "https://www.linkedin.com/in/usama-akram17",
+    "https://github.com/uusammmaa",
   ],
 };
 

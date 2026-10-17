@@ -35,7 +35,7 @@ export function Hero() {
           animate="show"
           className="font-display text-xs uppercase tracking-[0.4em] text-primary md:text-sm"
         >
-          Jezerox · AI systems for ambitious businesses
+          Usama Akram, AI Engineer · Lahore · Remote
         </motion.p>
 
         <motion.h1
@@ -45,7 +45,7 @@ export function Hero() {
           animate="show"
           className="font-display mt-6 max-w-4xl text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.92] tracking-tight text-foreground"
         >
-          I Build AI That Works For Your Business.
+          I build AI systems that run in production.
         </motion.h1>
 
         <motion.p
@@ -56,19 +56,11 @@ export function Hero() {
           className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl"
         >
           I&apos;m{" "}
-          <span className="text-foreground">Usama Akram</span>, AI architect and
-          full-stack engineer based in{" "}
-          <span className="text-accent">Lahore, PK</span>. Through{" "}
-          <a
-            href="https://jezerox.com"
-            className="text-primary underline-offset-4 hover:underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Jezerox
-          </a>
-          , I turn messy real-world operations into reliable assistants, agentic
-          pipelines, and production-grade AI products—not slides, shipped software.
+          <span className="text-foreground">Usama Akram</span>, an AI engineer
+          based in <span className="text-accent">Lahore</span>, working{" "}
+          <span className="text-foreground">remote</span>. I ship assistants,
+          RAG pipelines, and agentic workflows—the kind you can operate, not
+          just demo.
         </motion.p>
 
         <motion.div

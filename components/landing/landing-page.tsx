@@ -35,11 +35,15 @@ export function LandingPage() {
       </main>
       <footer className="border-t border-border/60 py-10 text-center text-sm text-muted-foreground">
         <p>
-          © {new Date().getFullYear()} Usama Akram ·{" "}
-          <a href="https://jezerox.com" className="text-primary hover:underline">
-            Jezerox
-          </a>{" "}
-          · Lahore, Pakistan
+          © {new Date().getFullYear()} Usama Akram · Lahore · Remote ·{" "}
+          <a
+            href="https://github.com/uusammmaa"
+            className="text-primary hover:underline"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
         </p>
       </footer>
     </>

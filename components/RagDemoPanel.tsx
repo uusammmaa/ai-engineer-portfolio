@@ -56,7 +56,12 @@ export function RagDemoPanel({
     [activeDocId, vectorStore],
   );
 
+  const chatId = activeDocId
+    ? `rag-${vectorStore}-${activeDocId}`
+    : `rag-${vectorStore}-pending`;
+
   const { messages, sendMessage, status, setMessages } = useChat({
+    id: chatId,
     transport,
   });
   const [input, setInput] = useState("");
